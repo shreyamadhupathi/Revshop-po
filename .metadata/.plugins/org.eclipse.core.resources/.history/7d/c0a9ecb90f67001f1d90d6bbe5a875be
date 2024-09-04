@@ -1,0 +1,11 @@
+package com.DAO;
+
+import com.entity.ProductDtls;
+
+import java.util.List;
+
+public interface WishlistDAO {
+    boolean addToWishlist(String userEmail, int productId);
+    boolean removeFromWishlist(String userEmail, int productId);
+    List<ProductDtls> getWishlistByUser(String userEmail);
+}

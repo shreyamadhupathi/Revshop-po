@@ -1,0 +1,56 @@
+package com.DAO;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.List;
+
+import com.entity.Product_Order;
+
+public class ProductOrderImpl implements ProductOrderDAO {
+	
+	private  Connection conn;
+
+	public ProductOrderImpl(Connection conn) {
+		super();
+		this.conn = conn;
+	}
+
+	@Override
+	public int getOrderNo() {
+		int i=1;
+		try {
+			
+			String sql = "select * from product_order";
+			PreparedStatement ps= conn.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				i++;
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace();		
+		}
+		return i;
+	}
+
+	@Override
+	public boolean saveOrder(List<Product_Order> blist) {
+		boolean f=false;
+		try {
+			
+			String sql="insert into product_order(order_id,user_name,email,address,phone,product_name,description,price,payment) values(?,?,?,?,?,?,?,?,?)";
+			
+			conn.setAutoCommit(false);
+			PreparedStatement ps= conn.prepareStatement(sql);
+			
+			for(Product_Order b:blist) {
+				
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return f;
+	}	
+}

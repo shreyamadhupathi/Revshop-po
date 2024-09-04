@@ -1,0 +1,107 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page isELIgnored="false"%>
+<%@page import="com.entity.User"%>
+<%@ page import="java.util.List"%>
+<%@ page import="com.entity.Product_Order"%>
+<%@ page import="com.DAO.OrderDAOImpl"%>
+<%@ page import="com.DB.DBConnect"%>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Track My Orders</title>
+    <style>
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .order-id {
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
+    <%@ include file="all_component/allcss.jsp"%>
+</head>
+<body>
+    <%@ include file="all_component/navbar.jsp"%>
+
+    <div class="container">
+        <h2>Track My Orders</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Payment Type</th>
+                    <th>Order Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%
+                    // Assuming the user is already logged in and their email is stored in the session
+                    String email = (String) session.getAttribute("userEmail");
+
+                    // Fetching the orders
+                    OrderDAOImpl dao = new OrderDAOImpl(DBConnect.getConn());
+                    List<Product_Order> orders = dao.getProduct(email);
+
+                    // Displaying each order in the table
+                    if (orders != null && !orders.isEmpty()) {
+                        for (Product_Order order : orders) {
+                %>
+                            <tr>
+                                <td class="order-id"><%= order.getOrderId() %></td>
+                                <td><%= order.getProductName() %></td>
+                                <td><%= order.getPrice() %></td>
+                                <td><%= order.getPaymentType() %></td>
+                                <td><%= order.getOrderDate() %></td>
+                            </tr>
+                <%
+                        }
+                    } else {
+                %>
+                        <tr>
+                            <td colspan="5">No orders found.</td>
+                        </tr>
+                <%
+                    }
+                %>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

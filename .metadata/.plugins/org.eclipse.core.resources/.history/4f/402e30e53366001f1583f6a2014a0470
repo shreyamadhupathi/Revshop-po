@@ -1,0 +1,11 @@
+package com.DAO;
+
+import com.entity.Product_Order;
+
+public interface ProductOrderDAO {
+	
+	public int getOrderNo();
+	
+	public boolean saveOrder(Product_Order b);
+
+}

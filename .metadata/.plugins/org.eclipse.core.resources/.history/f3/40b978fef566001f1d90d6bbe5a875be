@@ -1,0 +1,40 @@
+package com.admin.servlet;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.DAO.ProductOrderImpl;
+import com.DB.DBConnect;
+
+@WebServlet("/UpdateOrderStatusServlet")
+public class UpdateOrdersStatusServlet extends HttpServlet {
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            String orderId = req.getParameter("orderId");
+            String action = req.getParameter("action");
+
+            ProductOrderImpl dao = new ProductOrderImpl(DBConnect.getConn());
+
+            boolean updated = false;
+            if ("confirm".equals(action)) {
+                updated = dao.updateOrderStatus(orderId, "Shipment Confirmed");
+            }
+
+            if (updated) {
+                resp.sendRedirect("all_orders.jsp?status=success");
+            } else {
+                resp.sendRedirect("all_orders.jsp?status=failed");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.sendRedirect("all_orders.jsp?status=error");
+        }
+    }
+}

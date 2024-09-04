@@ -1,0 +1,72 @@
+package com.DAO;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+public class WishlistDAOImpl {
+    private Connection conn;
+
+    public WishlistDAOImpl(Connection conn) {
+        this.conn = conn;
+    }
+
+    public boolean addToWishlist(int userId, int productId) {
+        boolean result = false;
+        try {
+            String query = "INSERT INTO wishlists(user_id, product_id) VALUES(?, ?)";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, userId);
+            ps.setInt(2, productId);
+            int count = ps.executeUpdate();
+            if (count > 0) {
+                result = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public boolean removeFromWishlist(int userId, int productId) {
+        boolean result = false;
+        try {
+            String query = "DELETE FROM wishlists WHERE user_id = ? AND product_id = ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, userId);
+            ps.setInt(2, productId);
+            int count = ps.executeUpdate();
+            if (count > 0) {
+                result = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public List<ProductDtls> getWishlist(int userId) {
+        List<ProductDtls> list = new ArrayList<>();
+        try {
+            String query = "SELECT p.* FROM products p JOIN wishlists w ON p.product_id = w.product_id WHERE w.user_id = ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                ProductDtls product = new ProductDtls();
+                product.setProductId(rs.getInt("product_id"));
+                product.setProductName(rs.getString("product_name"));
+                product.setDescription(rs.getString("description"));
+                product.setPrice(rs.getDouble("price"));
+                product.setPhotoName(rs.getString("photo_name"));
+                list.add(product);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+}
+

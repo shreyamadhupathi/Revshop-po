@@ -1,0 +1,12 @@
+package com.DAO;
+
+import com.entity.Wishlist;
+import java.util.List;
+
+public interface WishlistDAO {
+    boolean addWishlist(Wishlist w);
+    List<Wishlist> getWishlistByUser(String userEmail);
+    boolean deleteWishlistItem(int productId, int userId);
+	boolean addToWishlist(String userEmail, int productId);
+	boolean removeFromWishlist(String userEmail, int productId);
+}

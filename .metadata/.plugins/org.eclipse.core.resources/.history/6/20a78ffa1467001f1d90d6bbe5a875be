@@ -1,0 +1,82 @@
+package com.DAO;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.entity.Wishlist;
+
+public class WishlistDAOImpl implements WishlistDAO {
+    private Connection conn;
+
+    public WishlistDAOImpl(Connection conn) {
+        this.conn = conn;
+    }
+
+    @Override
+    public boolean addWishlist(Wishlist w) {
+        boolean result = false;
+        try {
+            String sql = "INSERT INTO wishlist(userId, productId, productName, price) VALUES(?,?,?,?)";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, w.getUserId());
+            ps.setInt(2, w.getProductId());
+            ps.setString(3, w.getProductName());
+            ps.setDouble(4, w.getPrice());
+
+            int i = ps.executeUpdate();
+            if (i == 1) {
+                result = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    @Override
+    public List<Wishlist> getWishlistByUser(int userId) {
+        List<Wishlist> list = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM wishlist WHERE userId=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, userId);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Wishlist w = new Wishlist();
+                w.setId(rs.getInt("id"));
+                w.setUserId(rs.getInt("userId"));
+                w.setProductId(rs.getInt("productId"));
+                w.setProductName(rs.getString("productName"));
+                w.setPrice(rs.getDouble("price"));
+
+                list.add(w);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    @Override
+    public boolean deleteWishlistItem(int productId, int userId) {
+        boolean result = false;
+        try {
+            String sql = "DELETE FROM wishlist WHERE productId=? AND userId=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, productId);
+            ps.setInt(2, userId);
+
+            int i = ps.executeUpdate();
+            if (i == 1) {
+                result = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+}

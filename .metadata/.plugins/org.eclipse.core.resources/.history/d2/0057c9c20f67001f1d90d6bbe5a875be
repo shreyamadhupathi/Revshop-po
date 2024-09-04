@@ -1,0 +1,60 @@
+<%@page import="com.entity.User"%>
+<%@ page import="java.util.List"%>
+<%@ page import="com.entity.ProductDtls"%>
+<%@ page import="com.DAO.WishlistDAOImpl"%>
+<%@ page import="com.DB.DBConnect"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>My Wishlist</title>
+<%@ include file="all_component/allcss.jsp"%>
+
+<style>
+    /* Your existing styles or new styles for wishlist */
+</style>
+</head>
+<body>
+
+<%
+User u = (User)session.getAttribute("userobj"); 
+if (u == null) {
+    response.sendRedirect("login.jsp");
+    return;
+}
+%>
+
+<%@ include file="all_component/navbar.jsp"%>
+<section class="product-section">
+    <h2 class="text-center">My Wishlist</h2>
+    <div class="row">
+        <%
+        WishlistDAOImpl dao = new WishlistDAOImpl(DBConnect.getConn());
+        List<ProductDtls> list = dao.getWishlist(u.getId());
+        if (list.isEmpty()) {
+        %>
+        <p class="text-center">Your wishlist is empty.</p>
+        <% } else { 
+            for(ProductDtls b : list) {
+        %>
+        <div class="col-md-3">
+            <div class="product-card">
+                <img src="products/<%= b.getPhotoName() %>"
+                    style="width: 150px; height: 200px;"
+                    class="img-responsive center-block"
+                    alt="<%= b.getProductName() %>">
+                <p class="product-name"><%= b.getProductName() %></p>
+                <p class="description"><%= b.getDescription() %></p>
+                <p class="price">$<%= b.getPrice() %></p>
+                <a href="wishlist?pid=<%=b.getProductId() %>&action=remove"
+                    class="btn btn-danger btn-sm ml-2">Remove from Wishlist</a>
+            </div>
+        </div>
+        <% } } %>
+    </div>
+</section>
+</body>
+</html>

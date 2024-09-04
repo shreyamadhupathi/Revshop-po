@@ -1,0 +1,73 @@
+package com.servlet;
+
+import com.DAO.WishlistDAOImpl;
+import com.entity.Wishlist;
+import com.DAO.WishlistDAO;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.List;
+
+@WebServlet("/wishlist")
+public class WishlistServlet extends HttpServlet {
+    private Connection getConnection() throws SQLException {
+        // Replace with your own database URL, user, and password
+        String url = "jdbc:mysql://localhost:3306/yourDatabase";
+        String user = "yourUser";
+        String password = "yourPassword";
+        return DriverManager.getConnection(url, user, password);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+
+        try (Connection conn = getConnection()) {
+            WishlistDAO wishlistDAO = new WishlistDAOImpl(conn);
+
+            if ("add".equals(action)) {
+                int userId = Integer.parseInt(request.getParameter("userId"));
+                int productId = Integer.parseInt(request.getParameter("productId"));
+                String productName = request.getParameter("productName");
+                double price = Double.parseDouble(request.getParameter("price"));
+
+                Wishlist wishlist = new Wishlist();
+                boolean result = wishlistDAO.addWishlist(wishlist);
+
+                if (result) {
+                    response.sendRedirect("wishlist.jsp?status=success");
+                } else {
+                    response.sendRedirect("wishlist.jsp?status=failure");
+                }
+            } else if ("delete".equals(action)) {
+                int userId = Integer.parseInt(request.getParameter("userId"));
+                int productId = Integer.parseInt(request.getParameter("productId"));
+
+                boolean result = wishlistDAO.deleteWishlistItem(productId, userId);
+
+                if (result) {
+                    response.sendRedirect("wishlist.jsp?status=deleted");
+                } else {
+                    response.sendRedirect("wishlist.jsp?status=error");
+                }
+            } else if ("view".equals(action)) {
+                int userId = Integer.parseInt(request.getParameter("userId"));
+                List<Wishlist> wishlist = wishlistDAO.getWishlistByUser(userId);
+
+                request.setAttribute("wishlist", wishlist);
+                request.getRequestDispatcher("wishlist.jsp").forward(request, response);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            response.sendRedirect("error.jsp");
+        }
+    }
+}

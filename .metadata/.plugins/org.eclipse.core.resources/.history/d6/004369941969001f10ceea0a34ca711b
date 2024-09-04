@@ -1,0 +1,49 @@
+package com.user.servlet;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+
+import com.DAO.ProductOrderImpl;
+import com.DB.DBConnect;
+import com.entity.Product_Order;
+import com.entity.User;
+
+@WebServlet("/trackOrders")
+public class TrackOrderServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    public TrackOrderServlet() {
+        super();
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Retrieve user from session
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("userobj") == null) {
+            // User not logged in, redirect to login page
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        User user = (User) session.getAttribute("userobj");
+
+        // Initialize DAO
+        ProductOrderImpl dao = new ProductOrderImpl(DBConnect.getConn());
+
+        // Fetch orders for the user
+        List<Product_Order> orderList = dao.getProduct(user.getEmail());
+
+        // Set the order list as a request attribute
+        request.setAttribute("orderList", orderList);
+
+        // Forward the request to the JSP
+        request.getRequestDispatcher("track_orders.jsp").forward(request, response);
+    }
+}
+	

@@ -1,0 +1,117 @@
+<%@ page import="java.util.List" %>
+<%@ page import="com.entity.Wishlist" %>
+<%@ page import="com.DAO.WishlistDAOImpl" %>
+<%@ page import="com.DB.DBConnect" %>
+<%@ page import="javax.servlet.http.HttpSession" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Your Wishlist</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .btn {
+            padding: 8px 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            color: white;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+        .btn-danger {
+            background-color: #f44336;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Your Wishlist</h1>
+    
+    <%
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            Integer userId = (Integer) session.getAttribute("userId");
+            if (userId != null) {
+                WishlistDAOImpl dao = new WishlistDAOImpl(DBConnect.getConn());
+                List<Wishlist> wishlistItems = dao.getProductbyUser(userId);
+                
+                if (wishlistItems != null && !wishlistItems.isEmpty()) {
+    %>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%
+                for (Wishlist item : wishlistItems) {
+            %>
+            <tr>
+                <td><%= item.getPid() %></td>
+                <td><%= item.getProductname() %></td>
+                <td>$<%= item.getPrice() %></td>
+                <td>
+                    <a href="deleteWishlistItem?pid=<%= item.getPid() %>&uid=<%= userId %>" class="btn btn-danger">Remove</a>
+                </td>
+            </tr>
+            <%
+                }
+            %>
+        </tbody>
+    </table>
+    
+    <%
+                } else {
+    %>
+    
+    <p>No items in your wishlist yet.</p>
+    
+    <%
+                }
+            } else {
+                response.sendRedirect("login.jsp");
+            }
+        } else {
+            response.sendRedirect("login.jsp");
+        }
+    %>
+
+</div>
+
+</body>
+</html>

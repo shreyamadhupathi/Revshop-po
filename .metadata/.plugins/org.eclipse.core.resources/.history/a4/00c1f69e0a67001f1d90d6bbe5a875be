@@ -1,0 +1,9 @@
+package com.DAO;
+
+public interface WishlistDAO {
+	
+	public boolean addToWishlist(int userId, int productId);
+	
+	
+
+}

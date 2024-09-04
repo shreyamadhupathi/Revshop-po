@@ -1,0 +1,55 @@
+package com.servlets;
+
+import com.DAO.WishlistDAO;
+import com.DAO.WishlistDAOImpl;
+import com.entity.ProductDtls;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+
+@WebServlet("/wishlist")
+public class WishlistServlet extends HttpServlet {
+    private WishlistDAO wishlistDAO;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        wishlistDAO = new WishlistDAOImpl(DatabaseConnection.getConnection()); // Adjust to get a DB connection
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+        String userEmail = request.getParameter("userEmail");
+        int productId = Integer.parseInt(request.getParameter("productId"));
+        
+        boolean success = false;
+        
+        switch (action) {
+            case "add":
+                success = wishlistDAO.addToWishlist(userEmail, productId);
+                break;
+            case "remove":
+                success = wishlistDAO.removeFromWishlist(userEmail, productId);
+                break;
+        }
+        
+        response.sendRedirect("wishlist?action=view&userEmail=" + userEmail + "&success=" + success);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+        String userEmail = request.getParameter("userEmail");
+
+        if ("view".equals(action)) {
+            List<ProductDtls> wishlist = wishlistDAO.getWishlistByUser(userEmail);
+            request.setAttribute("wishlist", wishlist);
+            request.getRequestDispatcher("wishlist.jsp").forward(request, response);
+        }
+    }
+}

@@ -1,0 +1,73 @@
+package com.DAO;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import com.entity.Cart;
+import com.entity.ProductDtls;
+
+public class CartDAOImpl implements CartDAO{
+
+	private Connection conn;
+	
+	public CartDAOImpl(Connection conn) 
+	{
+		this.conn=conn;
+	}
+	
+	@Override
+	public boolean addCart(Cart c) {
+		
+		boolean f=false;
+		try {
+			
+			String sql="insert into cart(pid,uid,productName,description,price,total_price) values(?,?,?,?,?,?)";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, c.getPid());
+			ps.setInt(2, c.getUserId());
+			ps.setString(3, c.getProductname());
+			ps.setString(4, c.getDescription());
+			ps.setDouble(5, c.getPrice());
+			ps.setDouble(6, c.getTotalPrice());
+			
+			int i=ps.executeUpdate();
+			if(i==1) {
+				f=true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return f;
+	}
+
+	@Override
+	public Cart getProductbyUser(int userId) {
+		ProductDtls b=null;
+		int totalPrice;
+try {
+			
+			String sql="select * from cart where uId=?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, userId);
+			
+			ResultSet rs=ps.executeQuery();
+			
+			while(rs.next()) 
+			{
+				b=new ProductDtls();
+				b.setProductId(rs.getInt(1));
+				b.setProductName(rs.getString(2));
+				b.setDescription(rs.getString(3));
+				b.setPrice(rs.getString(4));
+				b.setProductCategory(rs.getString(5));
+				b.setStatus(rs.getString(6));
+				b.setPhotoName(rs.getString(7));
+				b.setEmail(rs.getString(8));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+}

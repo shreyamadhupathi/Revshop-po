@@ -1,0 +1,79 @@
+package com.DAO;
+
+import com.entity.ProductDtls;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+public class WishlistDAOImpl implements WishlistDAO {
+    private Connection conn;
+
+    public WishlistDAOImpl(Connection conn) {
+        this.conn = conn;
+    }
+
+    @Override
+    public boolean addToWishlist(String userEmail, int productId) {
+        boolean success = false;
+        try {
+            String sql = "INSERT INTO wishlist (userEmail, productId) VALUES (?, ?)";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, userEmail);
+            ps.setInt(2, productId);
+            int rows = ps.executeUpdate();
+            if (rows > 0) {
+                success = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return success;
+    }
+
+    @Override
+    public boolean removeFromWishlist(String userEmail, int productId) {
+        boolean success = false;
+        try {
+            String sql = "DELETE FROM wishlist WHERE userEmail = ? AND productId = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, userEmail);
+            ps.setInt(2, productId);
+            int rows = ps.executeUpdate();
+            if (rows > 0) {
+                success = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return success;
+    }
+
+    @Override
+    public List<ProductDtls> getWishlistByUser(String userEmail) {
+        List<ProductDtls> list = new ArrayList<>();
+        try {
+            String sql = "SELECT p.* FROM product_dtls p JOIN wishlist w ON p.productId = w.productId WHERE w.userEmail = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, userEmail);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                ProductDtls b = new ProductDtls();
+                b.setProductId(rs.getInt("productId"));
+                b.setProductName(rs.getString("productName"));
+                b.setDescription(rs.getString("description"));
+                b.setPrice(rs.getString("price"));
+                b.setProductCategory(rs.getString("productCategory"));
+                b.setStatus(rs.getString("status"));
+                b.setPhotoName(rs.getString("photo"));
+                b.setEmail(rs.getString("email"));
+                list.add(b);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+}

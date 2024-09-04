@@ -1,0 +1,36 @@
+package com.user.servlet;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.DAO.ProductOrderImpl;
+import com.DB.DBConnect;
+
+@WebServlet("/UpdateOrderStatus")  // Different URL pattern
+public class UpdateOrderStatusServlet extends HttpServlet {
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // Implementation for updating order status from user side
+        try {
+            String orderId = req.getParameter("orderId");
+            String status = req.getParameter("status");
+            
+            ProductOrderImpl dao = new ProductOrderImpl(DBConnect.getConn());
+            boolean result = dao.updateOrderStatus(orderId, status);
+            
+            if (result) {
+                resp.sendRedirect("user_orders.jsp"); // Redirect to the user's orders page
+            } else {
+                resp.sendRedirect("user_orders.jsp?error=updateFailed"); // Redirect with error
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.sendRedirect("user_orders.jsp?error=exception"); // Redirect with exception
+        }
+    }
+}

@@ -1,0 +1,72 @@
+<%@page import="com.entity.User"%>
+<%@ page import="java.util.List"%>
+<%@ page import="com.entity.ProductDtls"%>
+<%@ page import="com.DAO.ProductDAOImpl"%>
+<%@ page import="com.DB.DBConnect"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page isELIgnored="false"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>All Cheese Products</title>
+<%@ include file="all_component/allcss.jsp"%>
+
+<style>
+    /* Your existing styles */
+</style>
+
+<script>
+function showNoProductsFound() {
+    alert("No such products found.");
+}
+</script>
+
+</head>
+<body>
+
+<%
+User u=(User)session.getAttribute("userobj"); 
+%>
+
+<%@ include file="all_component/navbar.jsp"%>
+<section class="product-section">
+    <h2 class="text-center">Cheese Products</h2>
+    <div class="row">
+        <% 
+        String ch=request.getParameter("ch");
+        ProductDAOImpl dao9 = new ProductDAOImpl(DBConnect.getConn());
+        List<ProductDtls> list = dao9.getProductBySearch(ch);
+        
+        if (list.isEmpty()) {
+        %>
+        <script>
+            showNoProductsFound();
+        </script>
+        <% } else { 
+            for(ProductDtls b : list) {
+        %>
+        <div class="col-md-3">
+            <div class="product-card">
+                <img src="products/<%= b.getPhotoName() %>"
+                    style="width: 150px; height: 200px;"
+                    class="img-responsive center-block"
+                    alt="<%= b.getProductName() %>">
+                <p class="product-name"><%= b.getProductName() %></p>
+                <p class="description"><%= b.getDescription() %></p>
+                <p class="price">$<%= b.getPrice() %></p>
+                <% if(u==null) {%>
+                <a href="login.jsp" class="btn btn-danger btn-sm ml-2">Add to Cart</a>
+                <% } else { %>
+                <a href="cart?pid=<%=b.getProductId() %>&&uid=<%=u.getId() %>"
+                    class="btn btn-danger btn-sm ml-2">Add to Cart</a>
+                <% } %>
+            </div>
+        </div>
+        <% } } %>
+    </div>
+</section>
+</body>
+</html>
