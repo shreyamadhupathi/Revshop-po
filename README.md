@@ -41,3 +41,4 @@ Add New Products: List new products with detailed information, including price a
 View Orders: See all orders placed by buyers.
 
 View Product Reviews: Monitor feedback and reviews left by buyers on your products.
+ <h2>project handler - shreya : shreyamadupathi@gmail.com</h2>
