@@ -1,7 +1,11 @@
+<h1>APPLICATION OVERVIEW</h1>
+<h4>
 RevShop is a comprehensive and secure e-commerce platform designed to serve both buyers and sellers. The application is built with a focus on user-friendliness, security, and versatility, ensuring a seamless shopping experience for buyers and a robust management system for sellers. Buyers can easily browse products, add items to their cart, proceed to checkout, and make payments through a secure gateway. On the other hand, sellers can manage their inventory, add new products, and fulfill orders efficiently. The project will be demonstrated through a cloud-hosted working version, supported by a technical presentation and related diagrams.
-
-Core Functional Scope
-Buyer User Account
+</h4>
+<h2>
+Core Functional Scope</h2>
+<h2>
+Buyer User Account</h2>
 As a buyer, you can:
 
 Register on the Platform: Sign up for a new account using your email and a password.
@@ -20,7 +24,7 @@ Order History: View your previous orders and track their status.
 
 Save Favorites: Mark products as favorites to easily find them later.
 
-Seller Account
+<h2>Seller Account </h2>
 
 As a seller, you can:
 
