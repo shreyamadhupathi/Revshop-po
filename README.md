@@ -18,6 +18,8 @@ Browse Products: Search for products by category or using specific keywords.
 
 Manage Cart: Add or remove products from your cart, and specify the desired quantity.
 
+<h2>project handler - shreya : shreyamadupathi@gmail.com</h2>
+
 Checkout: Enter shipping and billing information to complete your purchase.
 
 Order History: View your previous orders and track their status.
